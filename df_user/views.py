@@ -12,7 +12,7 @@ def df_register(request):
 def df_register_handle(request):
     post = request.POST
     if post.get('pwd') != post.get('cpwd'):
-        return  redirect('/user/registerHandle')
+        return  redirect('/user/register')
     user = UserInfo()
     user.uname = post.get('user_name')
     pwd = post.get('pwd')
