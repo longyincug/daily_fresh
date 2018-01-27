@@ -72,7 +72,7 @@ def df_login_handle(request):
 def user_info(request):
     user_email = UserInfo.objects.get(id = request.session['user_id']).uemail
     user_address = UserInfo.objects.get(id = request.session['user_id']).uaddress
-    context = {'title':'用户中心','uname':request.session['user_name'],'uemail':user_email,'uaddress':user_address}
+    context = {'user':'yes','title':'用户中心','uname':request.session['user_name'],'uemail':user_email,'uaddress':user_address}
     return render(request, 'df_user/user_center_info.html',context)
 
 def user_site(request):
@@ -81,7 +81,7 @@ def user_site(request):
     address = user.uaddress
     post = user.upost
     phone = user.uphone
-    context = {'title':'用户中心','receive':receive,'address':address,'post':post,'phone':phone}
+    context = {'user':'yes','title':'用户中心','receive':receive,'address':address,'post':post,'phone':phone}
     return render(request, 'df_user/user_center_site.html', context)
 
 def site_handle(request):
@@ -95,6 +95,8 @@ def site_handle(request):
     return redirect('/user/user_site')
 
 def user_order(request):
-    context = {'title':'用户中心'}
+    context = {'title':'用户中心','user':'yes'}
     return render(request, 'df_user/user_center_order.html',context)
+
+
 
