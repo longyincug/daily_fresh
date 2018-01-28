@@ -101,7 +101,7 @@
 				<!--<a href="#">扇贝</a>			-->
 				{%endfor%}
 			</div>
-			<a href="/list_2_1_1/" class="goods_more fr">查看更多 ></a>
+			<a href="/list2_1_1/" class="goods_more fr">查看更多 ></a>
 		</div>
 
 		<div class="goods_con clearfix">
@@ -137,6 +137,8 @@
 			</ul>
 		</div>
 	</div>
+
+	<!--由于缺少数据，只做了上面两个分类-->
 
 	<div class="list_model">
 		<div class="list_title clearfix">
@@ -295,22 +297,22 @@
 	</div>
 
 
-	<script type="text/javascript" src="/static/js/slideshow.js"></script>
-	<script type="text/javascript">
-		BCSlideshow('focuspic');
-		var oFruit = document.getElementById('fruit_more');
-		var oShownum = document.getElementById('show_count');
+	<!--<script type="text/javascript" src="/static/js/slideshow.js"></script>-->
+	<!--<script type="text/javascript">-->
+		<!--BCSlideshow('focuspic');-->
+		<!--var oFruit = document.getElementById('fruit_more');-->
+		<!--var oShownum = document.getElementById('show_count');-->
 
-		var hasorder = localStorage.getItem('order_finish');
+		<!--var hasorder = localStorage.getItem('order_finish');-->
 
-		if(hasorder)
-		{
-			oShownum.innerHTML = '2';
-		}
+		<!--if(hasorder)-->
+		<!--{-->
+			<!--oShownum.innerHTML = '2';-->
+		<!--}-->
 
-		oFruit.onclick = function(){
-			window.location.href = 'list.html';
-		}
-	</script>
+		<!--oFruit.onclick = function(){-->
+			<!--window.location.href = 'list.html';-->
+		<!--}-->
+	<!--</script>-->
 
 {%endblock body%}
