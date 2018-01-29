@@ -63,9 +63,26 @@ def detail(request, id):
     goods.gclick += 1
     goods.save()
     new_list = GoodsInfo.objects.filter(gtype=goods.gtype).order_by('-id')[0:2]
-
-    context = {'title':"商品详情",'goods':'yes',
-               'new':new_list,
-                'g':goods,
+    context = {'title': "商品详情", 'goods': 'yes',
+               'new': new_list,
+               'g': goods,
                }
-    return render(request, 'df_goods/detail.html',context)
+    res = render(request, 'df_goods/detail.html', context)
+
+    if request.session.has_key('user_id'):
+        # 最近浏览5个商品需要存到cookie中,（前提是登录了）
+        goods_id = '%d'%goods.id
+        cookieStr = request.COOKIES.get('ago','')
+        # 第一次为空，不能split，否则会产生一个空字符串
+        cookieList = []
+        if cookieStr != '':
+            cookieList = cookieStr.split(',')
+        if goods_id in cookieStr:
+            cookieList.remove(goods_id)
+        cookieList.insert(0,goods_id)
+        if len(cookieList) > 5:
+            del cookieList[5]
+        # 将最近浏览商品的id以字符串形式存储到cookie中
+        cookieStr = ','.join(cookieList)
+        res.set_cookie('ago',cookieStr)
+    return res

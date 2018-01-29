@@ -29,7 +29,10 @@
 
 //		在文本框修改商品数量后发生的事件
 		numShow.onblur = function () {
-		    var num = parseInt(numShow.value);
+//		    防止用户误输入小数或小于1的数
+		    var num = parseInt(numShow.value, 10);
+		    if(num<1){num=1;}
+		    numShow.value = num;
 			total.innerText = (num*parseFloat(price)).toFixed(2) + "元";
         }
     };

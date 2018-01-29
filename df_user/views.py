@@ -2,8 +2,13 @@ from django.shortcuts import render,redirect
 from .models import *
 from django.http import HttpResponse,HttpResponseRedirect
 from hashlib import sha1
+import os
+goodsPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'df_goods')
+import sys
+sys.path.append(goodsPath)
+# print(sys.path)
+from df_goods import models # 如何导入另一个应用的模型类，也需要注意
 
-# Create your views here.
 
 def df_register(request):
     context = {'title':'用户注册'}
@@ -37,10 +42,8 @@ def df_login_handle(request):
     uname = post.get('username')
     pwd = post.get('pwd')
     remember = post.get('remember')
-    context = {}
 
     userlist = UserInfo.objects.filter(uname=uname)
-    print(userlist)
     if len(userlist) == 1:
         user = userlist[0]
         # uemail = user.uemail
@@ -49,8 +52,10 @@ def df_login_handle(request):
         s1.update(pwd.encode('utf-8'))
         pwd2 = s1.hexdigest()
         if pwd2 == user.upwd:
+            # 判断，如果用户是在浏览中途登录的，登录后切换回去
+            url = request.COOKIES.get('pre_path','/')
             # 提前构造一个返回对象，是为了给其添加cookie
-            red = HttpResponseRedirect('/user/user_info')
+            red = HttpResponseRedirect(url)
             if remember == 'yes':
                 red.set_cookie('uname', uname)
             else:
@@ -69,12 +74,37 @@ def df_login_handle(request):
         context = {'title':'用户登录'}
         return render(request,'df_user/login.html',context)
 
+def df_logout(request):
+    request.session.flush()
+    return redirect('/')
+
+from .user_login import *
+# 用装饰器，进行登录验证
+@user_decorator_login
 def user_info(request):
     user_email = UserInfo.objects.get(id = request.session['user_id']).uemail
     user_address = UserInfo.objects.get(id = request.session['user_id']).uaddress
-    context = {'user':'yes','title':'用户中心','uname':request.session['user_name'],'uemail':user_email,'uaddress':user_address}
+    # 从cookie中取出用户最近浏览商品的id字符串
+    agoGoodsIDs = request.COOKIES.get('ago','')
+    # 为防止没有浏览记录的用户报错
+    if agoGoodsIDs == '':
+        goodsList = []
+    else:
+        # 将最近浏览商品id字符串转化为商品对象列表
+        idList = agoGoodsIDs.split(',')
+        # print(idList, "-" * 30)
+        goodsList = []
+        for g in idList:
+            goods = models.GoodsInfo.objects.get(pk=int(g))
+            goodsList.append(goods)
+
+    context = {'user':'yes','title':'用户中心','uname':request.session['user_name'],
+               'uemail':user_email,'uaddress':user_address,
+               'goodsList':goodsList,
+               }
     return render(request, 'df_user/user_center_info.html',context)
 
+@user_decorator_login
 def user_site(request):
     user = UserInfo.objects.get(id=request.session['user_id'])
     receive = user.ureceive
@@ -94,6 +124,7 @@ def site_handle(request):
     user.save()
     return redirect('/user/user_site')
 
+@user_decorator_login
 def user_order(request):
     context = {'title':'用户中心','user':'yes'}
     return render(request, 'df_user/user_center_order.html',context)

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'df_user',
     'df_goods',
     'tinymce',
+    'df_cart',
 ]
 
 MIDDLEWARE = [
