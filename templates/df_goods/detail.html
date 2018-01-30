@@ -1,5 +1,9 @@
 {% extends 'df_user/user_base.html' %}
 
+{%block head%}
+<script src="/static/js/jquery-1.12.4.min.js"></script>
+{%endblock%}
+
 {%block body%}
 
 <script>
@@ -86,7 +90,7 @@
 			<div class="goods_num clearfix">
 				<div class="num_name fl">数 量：</div>
 				<div class="num_add fl">
-					<input type="text" class="num_show fl" value="1">
+					<input type="text" class="num_show fl" id="numShow" value="1">
 					<a href="javascript:;" class="add fr">+</a>
 					<a href="javascript:;" class="minus fr">-</a>	
 				</div> 
@@ -137,8 +141,10 @@
 
 	<div class="add_jump"></div>
 
-	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 	<script type="text/javascript">
+
+
+
 		var $add_x = $('#add_cart').offset().top;
 		var $add_y = $('#add_cart').offset().left;
 
@@ -156,7 +162,23 @@
 					});
 
 			});
-		})
+		});
+
+
+        // 自己尝试写的ajax异步请求-------------
+        $(function () {
+            $('#add_cart').click(function () {
+                $.get('/cart/'+{{goods_id}}+'/'+$('#numShow').val()+'/', function (data) {
+                    console.log(data.status);
+                });
+            });
+        });
+
+
+
+
+
+        //---------------------
 	</script>
 
 {%endblock body%}

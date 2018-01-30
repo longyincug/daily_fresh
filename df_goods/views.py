@@ -66,6 +66,7 @@ def detail(request, id):
     context = {'title': "商品详情", 'goods': 'yes',
                'new': new_list,
                'g': goods,
+               'goods_id':id,
                }
     res = render(request, 'df_goods/detail.html', context)
 
@@ -77,8 +78,9 @@ def detail(request, id):
         cookieList = []
         if cookieStr != '':
             cookieList = cookieStr.split(',')
-        if goods_id in cookieStr:
-            cookieList.remove(goods_id)
+            print(cookieList,"--"*20)
+            if goods_id in cookieList:
+                cookieList.remove(goods_id)
         cookieList.insert(0,goods_id)
         if len(cookieList) > 5:
             del cookieList[5]

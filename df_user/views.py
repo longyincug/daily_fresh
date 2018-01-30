@@ -56,6 +56,8 @@ def df_login_handle(request):
             url = request.COOKIES.get('pre_path','/')
             # 提前构造一个返回对象，是为了给其添加cookie
             red = HttpResponseRedirect(url)
+            # 删除之前访问的url cookie
+            red.delete_cookie('pre_path')
             if remember == 'yes':
                 red.set_cookie('uname', uname)
             else:
