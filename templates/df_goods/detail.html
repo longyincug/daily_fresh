@@ -35,9 +35,18 @@
 		numShow.onblur = function () {
 //		    防止用户误输入小数或小于1的数
 		    var num = parseInt(numShow.value, 10);
-		    if(num<1){num=1;}
-		    numShow.value = num;
-			total.innerText = (num*parseFloat(price)).toFixed(2) + "元";
+		    if(isNaN(num)){
+		        alert("请输入正确的数字！");
+				numShow.value = 1;
+                total.innerText = parseFloat(price).toFixed(2) + "元";
+		    }
+		    else{
+                if (num < 1) {
+                    num = 1;
+                }
+                numShow.value = num;
+                total.innerText = (num * parseFloat(price)).toFixed(2) + "元";
+            }
         }
     };
 
@@ -98,7 +107,11 @@
 			<div class="total">总价：<em>{{g.gprice}}元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+				{%if uid%}
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+				{%else%}
+				<a href="/user/login/" class="add_cart">加入购物车</a>
+				{%endif%}
 			</div>
 		</div>
 	</div>
@@ -144,13 +157,11 @@
 	<script type="text/javascript">
 
 
-
+		// 动画效果，来自网络
 		var $add_x = $('#add_cart').offset().top;
 		var $add_y = $('#add_cart').offset().left;
-
 		var $to_x = $('#show_count').offset().top;
 		var $to_y = $('#show_count').offset().left;
-
 		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 		$('#add_cart').click(function(){
 			$(".add_jump").stop().animate({
@@ -158,18 +169,19 @@
 				'top': $to_x+7},
 				"fast", function() {
 					$(".add_jump").fadeOut('fast',function(){
-						$('#show_count').html(2);
+//						$('#show_count').html(2);
 					});
 
 			});
 		});
 
 
-        // 自己尝试写的ajax异步请求-------------
+        // 自己尝试写的ajax异步请求-------------上传商品数据，接收购物车商品信息
         $(function () {
             $('#add_cart').click(function () {
                 $.get('/cart/'+{{goods_id}}+'/'+$('#numShow').val()+'/', function (data) {
-                    console.log(data.status);
+//                    console.log(data.status);
+					$('#show_count').html(data.status);
                 });
             });
         });

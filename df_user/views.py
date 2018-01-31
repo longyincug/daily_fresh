@@ -46,8 +46,6 @@ def df_login_handle(request):
     userlist = UserInfo.objects.filter(uname=uname)
     if len(userlist) == 1:
         user = userlist[0]
-        # uemail = user.uemail
-        # uaddress = user.uaddress
         s1 = sha1()
         s1.update(pwd.encode('utf-8'))
         pwd2 = s1.hexdigest()
@@ -77,7 +75,10 @@ def df_login_handle(request):
         return render(request,'df_user/login.html',context)
 
 def df_logout(request):
-    request.session.flush()
+    # request.session.flush()
+    # 用户退出时，别清空所有session，否则历史浏览等数据就不存在了
+    del request.session['user_id']
+    del request.session['user_name']
     return redirect('/')
 
 from .user_login import *
