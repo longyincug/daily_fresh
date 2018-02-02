@@ -13,11 +13,12 @@
 		<li class="col06">操作</li>
 	</ul>
 
+<form action="/order/" method="get" id="subForm">
 	{%for c in carts%}
 	<ul class="cart_list_td clearfix" id="{{c.goods_id}}">
-		<li class="col01"><input type="checkbox" name="items" checked="checked"></li>
+		<li class="col01"><input type="checkbox" name="items" checked="checked" value="{{c.id}}"></li>
 		<li class="col02"><img src="/static/{{c.goods.gpic}}"></li>
-		<li class="col03">{{c.goods.gtitle}}<br><em>{{c.goods.gprice}}元/{{c.goods.gunit}}</em></li>
+		<li class="col03">{{c.goods.gtitle}}<br><em>{{c.goods.gprice}}元/{{c.goods.gunit}}</em><br>库存余量：{{c.goods.gstock}}</li>
 		<li class="col04">{{c.goods.gunit}}</li>
 		<li class="col05">{{c.goods.gprice}}元</li>
 		<li class="col06">
@@ -31,17 +32,23 @@
 		<li class="col08"><a href="javascript:;">删除</a></li>
 	</ul>
 	{%endfor%}
-
+</form>
 
 	<ul class="settlements">
 		<li class="col01"><input type="checkbox" name="checkall" checked="checked" id="checkall"></li>
 		<li class="col02">全选</li>
 		<li class="col03">合计(不含运费)：<span>¥</span><em></em><br>共计<b>{{carts|length}}</b>件商品</li>
-		<li class="col04"><a href="place_order.html">去结算</a></li>
+		<!--为了让a标签具有submit功能，绑定一个事件！以get请求提交表单数据，这样可以只提交用户选中的商品到订单-->
+		<li class="col04"><a href="#" name="submit" onclick="document.getElementById('subForm').submit();return false">去结算</a></li>
 	</ul>
+
 
 <script>
 	window.onload = function () {
+
+	    if({{stock|default:0}}){
+	        alert('库存不足！请修改数量');
+		}
 		// 购物车中所有的商品类ul集合
 		var uls = document.getElementsByClassName("cart_list_td");
 
@@ -168,20 +175,24 @@
         for(var u=0;u<uls.length;u++){
 		    var del = uls[u].getElementsByClassName('col08')[0].getElementsByTagName('a')[0];
 			del.onclick = function () {
-			    // 找出ul节点
-			    var goods = this.parentNode.parentNode;
-				$.get('/cart/del/'+goods.id+'/', function (data) {
-					console.log(data.status);
-					if(data.status){
-					    // 自杀
-					    goods.parentNode.removeChild(goods);
-					    // 更新数据
-					    total(uls);
-					    // 最顶端的总商品数，也更新
-					    var total_count = document.getElementsByClassName("total_count")[0].getElementsByTagName('em')[0];
-						total_count.innerText -= 1;
-					}
-                });
+			    var r = confirm("确定删除吗？");
+			    if(r==true){
+			        // 找出ul节点
+					var goods = this.parentNode.parentNode;
+					$.get('/cart/del/'+goods.id+'/', function (data) {
+						console.log(data.status);
+						if(data.status){
+							// 自杀
+							goods.parentNode.removeChild(goods);
+							// 更新数据
+							total(uls);
+							// 最顶端的总商品数，也更新
+							var total_count = document.getElementsByClassName("total_count")[0].getElementsByTagName('em')[0];
+							total_count.innerText -= 1;
+						}
+					});
+				}
+
             };
 
 		}

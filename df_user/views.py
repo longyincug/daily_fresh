@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import *
+from df_order.models import *
 from django.http import HttpResponse,HttpResponseRedirect
 from hashlib import sha1
 import os
@@ -75,10 +76,8 @@ def df_login_handle(request):
         return render(request,'df_user/login.html',context)
 
 def df_logout(request):
-    # request.session.flush()
-    # 用户退出时，别清空所有session，否则历史浏览等数据就不存在了
-    del request.session['user_id']
-    del request.session['user_name']
+    # 退出登录时，清除用户会话信息
+    request.session.flush()
     return redirect('/')
 
 from .user_login import *
@@ -128,8 +127,16 @@ def site_handle(request):
     return redirect('/user/user_site')
 
 @user_decorator_login
-def user_order(request):
-    context = {'title':'用户中心','user':'yes'}
+def user_order(request,page):
+    orders_list = OrderInfo.objects.all()
+    from django.core import paginator
+    pagi = paginator.Paginator(orders_list,2)
+    if page == None or page == '':
+        page = 1
+    orders = pagi.page(int(page))
+    context = {'title':'用户中心','user':'yes',
+               'orders':orders,
+               }
     return render(request, 'df_user/user_center_order.html',context)
 
 

@@ -1,23 +1,24 @@
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from .models import *
-# 暂时没找到更好的导入其他应用模块的办法
-# import os
-# userPath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'df_user')
-# import sys
-# sys.path.append(userPath)
+
 from df_user import user_login
 
 
-@ user_login.user_decorator_login
+@user_login.user_decorator_login
 def cart(request):
     user_id = request.session.get('user_id','')
     carts = CartInfo.objects.filter(user=int(user_id))
+    # 库存状态码
+    stock = request.COOKIES.get('stock','')
     # 将一些运算尽可能交给用户的浏览器去做，减轻服务器的负担
     context = {'title':'购物车','user':'yes',
                 'carts':carts,
+               'stock':stock,
                }
-    return render(request,'df_cart/cart.html',context)
+    ren = render(request, 'df_cart/cart.html', context)
+    ren.delete_cookie('stock')
+    return ren
 
 # 处理加入购物车的请求
 def cart_handle(request,goods_id,amount):
