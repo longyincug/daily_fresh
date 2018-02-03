@@ -54,7 +54,7 @@
 				<a href="/list{{type}}_1_2/" {% if sort == 2 %} class="active"{%endif%}>价格</a>
 				<a href="/list{{type}}_1_3/" {% if sort == 3 %} class="active"{%endif%}>人气</a>
 			</div>
-
+			<!--展示商品-->
 			<ul class="goods_type_list clearfix">
 				{% for g in pagelist %}
 				<li>
@@ -69,7 +69,7 @@
 				{%endfor%}
 
 			</ul>
-
+			<!--设置分页-->
 			<div class="pagenation">
 				{% if pagelist.has_previous %}
 				<a href="/list{{type}}_{{page|add:-1}}_{{sort}}/"><上一页</a>

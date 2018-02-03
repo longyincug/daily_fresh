@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^cart/',include('df_cart.urls')),
     url(r'^order/',include('df_order.urls')),
     url(r'^',include('df_goods.urls')),
+    # 自定义搜索框，就不需要这个了，而要去应用里面定义
     # url(r'^search/', include('haystack.urls')),
 
 ]
