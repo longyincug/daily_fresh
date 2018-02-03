@@ -100,3 +100,14 @@ def detail(request, id):
         cookieStr = ','.join(cookieList)
         res.set_cookie('ago', cookieStr)
     return res
+
+
+# 搜索框，自定义上下文,传递到模板中
+from haystack.views import SearchView
+class MySearchView(SearchView):
+    def extra_context(self):
+        context = super().extra_context()
+        context['title'] = '搜索'
+        context['goods'] = 'yes'
+        context['status'] = models.CartInfo.objects.filter(user_id=self.request.session.get('user_id', '')).count()
+        return context
